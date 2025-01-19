@@ -32,27 +32,27 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
     version = project.version(version_number)
     model = version.model
 
-    project_type = st.write(f"#### Project Type: {project.type}")
+    project_type = st.write(f"#### Тип проекта: {project.type}")
 
     for i in range(len(project_metadata)):
         if project_metadata[i]['id'] == extracted_url:
             st.write(f"#### Модель: {model_id}")
             st.write(f"#### Версия: {project_metadata[i]['name']}")
-            st.write(f"Input Image Size for Model Training (pixels, px):")
+            st.write(f"Параметры входного изображения (пиксели, px):")
 
             width_metric, height_metric = st.columns(2)
-            width_metric.metric(label='Pixel Width', value=project_metadata[i]['preprocessing']['resize']['width'])
-            height_metric.metric(label='Pixel Height', value=project_metadata[i]['preprocessing']['resize']['height'])
+            width_metric.metric(label='Ширина (px)', value=project_metadata[i]['preprocessing']['resize']['width'])
+            height_metric.metric(label='Высота (px)', value=project_metadata[i]['preprocessing']['resize']['height'])
 
-            if project_metadata[i]['model']['fromScratch']:
-                train_checkpoint = 'Scratch'
-                st.write(f"#### Version trained from {train_checkpoint}")
-            elif project_metadata[i]['model']['fromScratch'] is False:
-                train_checkpoint = 'Checkpoint'
-                st.write(f"#### Version trained from {train_checkpoint}")
-            else:
-                train_checkpoint = 'Not Yet Trained'
-                st.write(f"#### Version is {train_checkpoint}")
+            # if project_metadata[i]['model']['fromScratch']:
+            #     train_checkpoint = 'Scratch'
+            #     st.write(f"#### Version trained from {train_checkpoint}")
+            # elif project_metadata[i]['model']['fromScratch'] is False:
+            #     train_checkpoint = 'Checkpoint'
+            #     st.write(f"#### Version trained from {train_checkpoint}")
+            # else:
+            #     train_checkpoint = 'Not Yet Trained'
+            #     st.write(f"#### Version is {train_checkpoint}")
 
     st.write("#### Загруженное изображение")
     st.image(uploaded_img, caption="Загруженное изображение")
@@ -85,18 +85,22 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
 
         # st.write(roi_bbox) # TODO
 
-        collected_predictions.append({"class":class_name, "confidence":confidence_score,
-                                    "x0,x1,y0,y1":[int(x0),int(x1),int(y0),int(y1)],
-                                    "Width":int(bounding_box['width']), "Height":int(bounding_box['height']),
-                                    "ROI, bbox (y+h,x+w)":roi_bbox,
-                                    "bbox area (px)":abs(int(x0)-int(x1))*abs(int(y0)-int(y1))})
+        collected_predictions.append({
+            "Класс": class_name, 
+            "Точность": confidence_score,
+            "x0,x1,y0,y1": [int(x0),int(x1),int(y0),int(y1)],
+            "Ширина":int(bounding_box['width']),
+            "Высота":int(bounding_box['height']),
+            "ROI, bbox (y+h, x+w)": roi_bbox,
+            "Площадь, bbox (px)": abs(int(x0)-int(x1))*abs(int(y0)-int(y1))
+        })
 
         start_point = (int(x0), int(y0))
         end_point = (int(x1), int(y1))
         
         # draw/place FILLED half-transparent bounding boxes on image
         if class_name == 'gas-pipelines':
-            bg_color = (255, 255, 255)
+            bg_color = (255, 255, 0)
             alpha = 0.25 # transparency factor
             # add class name without background on the left bottom corner
             cv2.putText(inferenced_img,
@@ -109,7 +113,7 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
             )
         else:
             bg_color = (255, 0, 0)
-            alpha = 0.25 # transparency factor
+            alpha = 0.35 # transparency factor
             # add class name with filled background
             # cv2.rectangle(
             #     inferenced_img,
@@ -136,9 +140,8 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
         cv2.addWeighted(overlay, alpha, inferenced_img, 1 - alpha, 0, inferenced_img)
 
 
-
     ## Subtitle.
-    st.write("### Обработанное изображение")
+    st.write("### Найденные повреждения")
     st.image(inferenced_img, caption="Обработанное изображение", use_container_width=True)
 
     results_tab, json_tab, project_tab = st.tabs(["Результаты обработки", "Результаты в формате JSON", "Информация о модели"])
