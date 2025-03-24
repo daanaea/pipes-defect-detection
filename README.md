@@ -74,15 +74,14 @@ PipeDetect exemplifies the practical use of AI and machine vision in industrial 
 
 ### *Code Metadata Table*
 
-| *Nr.* | *Code metadata description* | *Details* |
-|--------|-------------------------------|-------------|
-| C1 | Current code version | v1.0 |
-| C2 | Permanent link to code/repository | [GitHub URL here] |
-| C3 | Legal Code License | MIT |
-| C4 | Code versioning system used | Git |
-| C5 | Software code languages, tools, and services used | Python, Streamlit, YOLOv11, OpenCV |
-| C6 | Compilation requirements, operating environments & dependencies | Python 3.10, streamlit, torch, ultralytics |
-| C7 | If available Link to developer documentation/manual | [GitHub README] |
-| C8 | Support email for questions | eginovaa@gmail.com |
+| *Code metadata description* | *Details* |
+|-------------------------------|-------------|
+| Current code version | v1.0 |
+| Codebase repository | [GitHub](https://github.com/daanaea/pipes-defect-detection/edit/main/README.md) |
+| Legal Code License | MIT |
+| Code versioning system used | Git |
+| Software code languages, tools, and services used | Python, Streamlit, YOLOv11, OpenCV |
+| Compilation requirements, operating environments & dependencies | Python 3.10, streamlit, torch, ultralytics |
+| Support email for questions | eginovaa@gmail.com |
 
 ---
