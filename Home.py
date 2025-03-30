@@ -32,30 +32,20 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
     version = project.version(version_number)
     model = version.model
 
-    project_type = st.write(f"#### Тип проекта: {project.type}")
+    project_type = st.write(f"#### Project Type: {project.type}")
 
     for i in range(len(project_metadata)):
         if project_metadata[i]['id'] == extracted_url:
-            st.write(f"#### Модель: {model_id}")
-            st.write(f"#### Версия: {project_metadata[i]['name']}")
-            st.write(f"Параметры входного изображения (пиксели, px):")
+            st.write(f"#### Model: {model_id}")
+            st.write(f"#### Version: {project_metadata[i]['name']}")
+            st.write(f"Input Image Parameters (pixels, px):")
 
             width_metric, height_metric = st.columns(2)
-            width_metric.metric(label='Ширина (px)', value=project_metadata[i]['preprocessing']['resize']['width'])
-            height_metric.metric(label='Высота (px)', value=project_metadata[i]['preprocessing']['resize']['height'])
+            width_metric.metric(label='Width (px)', value=project_metadata[i]['preprocessing']['resize']['width'])
+            height_metric.metric(label='Height (px)', value=project_metadata[i]['preprocessing']['resize']['height'])
 
-            # if project_metadata[i]['model']['fromScratch']:
-            #     train_checkpoint = 'Scratch'
-            #     st.write(f"#### Version trained from {train_checkpoint}")
-            # elif project_metadata[i]['model']['fromScratch'] is False:
-            #     train_checkpoint = 'Checkpoint'
-            #     st.write(f"#### Version trained from {train_checkpoint}")
-            # else:
-            #     train_checkpoint = 'Not Yet Trained'
-            #     st.write(f"#### Version is {train_checkpoint}")
-
-    st.write("#### Загруженное изображение")
-    st.image(uploaded_img, caption="Загруженное изображение")
+    st.write("#### Uploaded Image")
+    st.image(uploaded_img, caption="Uploaded Image")
 
     predictions = model.predict(uploaded_img) # 'https://daanaea.github.io/i/assets/img/IMG_6905_pipe_with_corrosion.jpg'
     predictions_json = predictions.json()
@@ -86,13 +76,13 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
         # st.write(roi_bbox) # TODO
 
         collected_predictions.append({
-            "Класс": class_name, 
-            "Точность": confidence_score,
+            "Class": class_name, 
+            "Confidence": confidence_score,
             "x0,x1,y0,y1": [int(x0),int(x1),int(y0),int(y1)],
-            "Ширина":int(bounding_box['width']),
-            "Высота":int(bounding_box['height']),
+            "Width": int(bounding_box['width']),
+            "Height": int(bounding_box['height']),
             "ROI, bbox (y+h, x+w)": roi_bbox,
-            "Площадь, bbox (px)": abs(int(x0)-int(x1))*abs(int(y0)-int(y1))
+            "Area, bbox (px)": abs(int(x0)-int(x1))*abs(int(y0)-int(y1))
         })
 
         start_point = (int(x0), int(y0))
@@ -141,37 +131,37 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
 
 
     ## Subtitle.
-    st.write("### Найденные повреждения")
-    st.image(inferenced_img, caption="Обработанное изображение", use_container_width=True)
+    st.write("### Detected Defects")
+    st.image(inferenced_img, caption="Processed Image", use_container_width=True)
 
-    results_tab, json_tab, project_tab = st.tabs(["Результаты обработки", "Результаты в формате JSON", "Информация о модели"])
+    results_tab, json_tab, project_tab = st.tabs(["Processing Results", "Results in JSON Format", "Model Information"])
 
     with results_tab:
         ## Display results dataframe in main app.
-        st.write('### Результаты обработки')
+        st.write('### Processing Results')
         st.dataframe(collected_predictions)
 
     with json_tab:
         ## Display the JSON in main app.
-        st.write('### Результаты в формате JSON')
+        st.write('### Results in JSON Format')
         st.write(predictions_json)
 
     with project_tab:
-        st.write(f"Группа повреждений: {project.annotation}")
+        st.write(f"Damage Group: {project.annotation}")
         col1, col2, col3 = st.columns(3)
-        col1.write(f'Общее количество изображений в датасете: {version.images}')
+        col1.write(f'Total Images in Dataset: {version.images}')
         # col1.metric(label='Количество аугментированных изображений', value=version.splits['train'])
         
         for i in range(len(project_metadata)):
             if project_metadata[i]['id'] == extracted_url:
                 col2.metric(label='mean Average Precision (mAP)', value=f"{float(project_metadata[i]['model']['map'])}%")
         
-        col3.metric(label='Тренировочный датасет (train)', value=project.splits['train'])
-        col3.metric(label='Проверочный датасет (validation)', value=project.splits['valid'])
-        col3.metric(label='Тестовый датасет (test)', value=project.splits['test'])
+        col3.metric(label='Training Dataset (train)', value=project.splits['train'])
+        col3.metric(label='Validation Dataset (validation)', value=project.splits['valid'])
+        col3.metric(label='Test Dataset (test)', value=project.splits['test'])
 
         col4, col5, col6 = st.columns(3)
-        col4.write('Примененные шаги предобработки:')
+        col4.write('Applied Preprocessing Steps:')
         col4.json(version.preprocessing)
         # col5.write('Augmentation steps applied:')
         # col5.json(version.augmentation)
@@ -187,22 +177,22 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
 #                                         type=["png", "jpg", "jpeg"],
 #                                         accept_multiple_files=False)
     
-st.write("# GPdefectscan AI: Интеллектуальная система сегментации дефектов трубопроводов")
+st.write("# GPdefectscan AI: Intelligent Pipeline Defect Segmentation System")
 
 with st.form("project_access"):
-    st.write("#### Выберите изображения для обработки.")
-    uploaded_file_od = st.file_uploader("Загрузка файла изображения",
+    st.write("#### Select an image for processing.")
+    uploaded_file_od = st.file_uploader("Upload Image File",
                                         type=["png", "jpg", "jpeg"],
                                         accept_multiple_files=False)
-    st.write("#### Нажмите на кнопку 'Найти повреждения' после загрузки изображения!")
+    st.write("#### Click 'Find Defects' after uploading the image!")
     # project_url_od = st.text_input("Project URL", key="project_url_od",
     #                             help="Copy/Paste Your Project URL: https://docs.roboflow.com/python#finding-your-project-information-manually",
     #                             placeholder="https://app.roboflow.com/workspace-id/model-id/version")
     # private_api_key = st.text_input("Private API Key", key="private_api_key", type="password",placeholder="Input Private API Key")
-    submitted = st.form_submit_button("Найти повреждения")
+    submitted = st.form_submit_button("Find Defects")
     
     if submitted:
-        st.write("Загрузка модели...")
+        st.write("Loading model...")
         project_url_od = 'https://app.roboflow.com/ai-eg-7bmff/gas-pipelines/2'
         private_api_key = 'u8UOsCouQTPV12lxGfny'
         extracted_url = project_url_od.split("roboflow.com/")[1]
@@ -242,62 +232,55 @@ if uploaded_file_od != None:
 
 """
 
-### Памятка пользователя
+### User Guide
 
-##### Открытие сайта
+##### Website
 
-Перейдите по ссылке: [pipes-defect-detection.streamlit.app](https://pipes-defect-detection.streamlit.app).
-
----
-
-##### Основные шаги работы
-
-1. Загрузка изображения:
-    * Нажмите кнопку «Upload Image».
-    * Выберите файл с изображением участка газопровода на вашем устройстве.
-    * Убедитесь, что изображение четкое и хорошо освещено.
-2. Запуск анализа:
-    * После загрузки файла нажмите кнопку «Analyze» или «Run Detection».
-    * Дождитесь завершения анализа (займет несколько секунд).
-3. Просмотр результата:
-    * На экране отобразится исходное изображение с выделенными рамками на
-участках, где обнаружены дефекты.
-    * Рядом будут указаны тип дефекта и вероятность его наличия.
+Go to the link: [pipes-defect-detection.streamlit.app](https://pipes-defect-detection.streamlit.app).
 
 ---
 
-##### Полезные советы
+##### Instructions
 
-* Качество изображения: Загружайте изображения с высоким разрешением
-для повышения точности анализа.
-* Типы дефектов: Система распознает визуально заметные дефекты, такие
-как деформация, коррозия, разрушение окраски.
-
----
-
-##### Часто задаваемые вопросы
-
-*Какие изображения подходят?* Четкие фото надземных участков
-газопровода, снятые при хорошем освещении.
-
-*Можно ли анализировать видео?* На данный момент поддерживается
-только загрузка изображений.
-
-*Как связаться для обратной связи?* Пишите на email: [eginovaa@gmail.com](mailto:eginovaa@gmail.com).
+1. Uploading an umage:
+    * Click the "Upload Image" button.
+    * Select a file with an image of the pipeline section on your device.
+    * Ensure the image is clear and well-lit.
+2. Running analysis:
+    * After uploading the file, click the "Analyze" or "Run Detection" button.
+    * Wait for the analysis to complete (takes a few seconds).
+3. Viewing results:
+    * The screen will display the original image with highlighted boxes on areas where defects are detected.
+    * The type of defect and its probability will be shown next to it.
 
 ---
 
-##### Ограничения
+##### Tips
 
-Система не заменяет физический осмотр газопровода, а является
-дополнительным инструментом для диагностики.
-
-Дефекты, скрытые под изоляцией, не могут быть распознаны.
+* Image Quality: Upload high-resolution images to improve analysis accuracy.
+* Types of Defects: The system detects visually noticeable defects such as deformation, corrosion, and paint damage.
 
 ---
 
-##### Рекомендации
+##### FAQ
 
-Используйте результаты анализа для оперативного реагирования на
-обнаруженные дефекты и предотвращения аварийных ситуаций.
+*What images are suitable?* Clear photos of above-ground pipeline sections taken in good lighting conditions.
+
+*Can videos be analyzed?* Currently, only image uploads are supported.
+
+*How to provide feedback?* Email us at: [eginovaa@gmail.com](mailto:eginovaa@gmail.com).
+
+---
+
+##### Limitations
+
+The system does not replace physical pipeline inspections but serves as an additional diagnostic tool.
+
+Defects hidden under insulation cannot be detected.
+
+---
+
+##### Recommendations
+
+Use the analysis results for prompt response to detected defects and to prevent emergency situations.
 """
