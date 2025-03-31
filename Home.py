@@ -68,7 +68,7 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
     st.image(uploaded_img, caption="Uploaded image")
 
     predictions = model.predict(uploaded_img) # 'https://daanaea.github.io/i/assets/img/IMG_6905_pipe_with_corrosion.jpg'
-    predictions.save("output.jpg")
+    
     predictions_json = predictions.json()
 
     # drawing bounding boxes with the Pillow library
@@ -142,6 +142,9 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
             thickness=-1
         )
         cv2.addWeighted(overlay, alpha, inferenced_img, 1 - alpha, 0, inferenced_img)
+
+    # predictions.save("output.jpg")
+    cv2.imwrite("output.jpg", inferenced_img)
 
 
     ## Subtitle.
