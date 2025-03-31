@@ -1,5 +1,8 @@
 ## *PipeDetect: A Streamlit-Powered Web Tool for Automated Pipeline Defect Detection Using YOLOv11*
 
+[![DOI](https://zenodo.org/badge/916820162.svg)](https://doi.org/10.5281/zenodo.15110765)
+
+
 ### *Abstract*
 
 This paper presents PipeDetect, an open-access web-based platform for automated detection of pipeline defects using advanced deep learning techniques. Developed using Streamlit and YOLOv11, the system enables users to upload pipeline imagery and receive instant visual feedback on detected defects such as corrosion, deformation, and coating damage. The tool is designed for engineers, pipeline inspectors, and urban infrastructure managers, offering an accessible and intuitive interface without the need for specialized software or hardware. PipeDetect bridges the gap between cutting-edge computer vision models and real-world infrastructure monitoring by delivering AI-based defect analysis through the browser. The tool is deployed at [pipes-defect-detection.streamlit.app](https://pipes-defect-detection.streamlit.app) and the source code is available on GitHub [link].
