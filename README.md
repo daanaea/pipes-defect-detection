@@ -84,7 +84,7 @@ PipeDetect exemplifies the practical use of AI and machine vision in industrial 
 | License | MIT |
 | Code versioning system used | Git |
 | Software code languages, tools, and services used | Python, Streamlit, YOLOv11, OpenCV |
-| Compilation requirements, operating environments & dependencies | Python 3.10, streamlit, torch, ultralytics |
+| Compilation requirements, operating environments & dependencies | Python 3.9, Streamlit, Ultralytics |
 | Support email for questions | [eginovaa@mail.ru](mailto:eginovaa@mail.ru) |
 
 ---
