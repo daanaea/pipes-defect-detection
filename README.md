@@ -79,7 +79,7 @@ PipeDetect exemplifies the practical use of AI and machine vision in industrial 
 
 | *Code metadata description* | *Details* |
 |-------------------------------|-------------|
-| Current code version | v1.5 |
+| Current code version | v1.0 |
 | Codebase repository | [GitHub](https://github.com/daanaea/pipes-defect-detection/edit/main/README.md) |
 | License | MIT |
 | Code versioning system used | Git |
