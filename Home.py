@@ -182,40 +182,45 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
         col4.json(version.preprocessing)
     
     if st.button("Generate PDF report"):
-        pdf_path = generate_pdf(predictions_json, "output.jpg")
+        pdf_path = generate_pdf(predictions_json, "output.jpg", "input.jpg")
         display_pdf_download_button(pdf_path)
 
 # save results into PDF
-def generate_pdf(result_json, image_path):
+def generate_pdf(result_json, image_path, original_image_path):
     pdf = FPDF()
     pdf.add_page()
 
     # Add project name in bold
     pdf.set_font("Arial", style="B", size=12)
     pdf.cell(200, 10, txt="GPdefectscan AI", ln=True, align='C')
+
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Report on gas pipeline defects", ln=True, align='C')
+
+    # Add the original image
+    pdf.set_font("Arial", style="B", size=12)
+    pdf.cell(200, 10, txt="Original image", ln=True, align='C')
+    pdf.image(original_image_path, x=10, y=None, w=160)
     pdf.ln(5)
 
     pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Gas Pipeline Defect Detection Report", ln=True, align='C')
-    pdf.ln(10)
-
-    pdf.image(image_path, x=10, y=None, w=180)
-    pdf.ln(85)
+    pdf.cell(200, 10, txt="Detected defects", ln=True, align='C')
+    pdf.image(image_path, x=10, y=None, w=160)
+    pdf.ln(5)
 
     pdf.set_font("Arial", size=10)
     for item in result_json['predictions']:
         text = f"Class: {item['class']}, Confidence: {item['confidence']:.2f}, BBox: {item['x']}, {item['y']}, {item['width']}, {item['height']}"
         pdf.multi_cell(0, 10, txt=text)
 
-    pdf.ln(10)
-    pdf.set_font("Arial", size=8)
-    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    pdf.cell(200, 10, txt=f"Generated on: {current_datetime}", ln=True, align='C')
-
-    # Add project website link
+    pdf.ln(5)
     pdf.set_font("Arial", size=10)
-    pdf.cell(200, 10, txt="Website: https://pipes-defect-detection.streamlit.app/", ln=True, align='C')
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    pdf.cell(200, 10, txt=f"Generated on: {current_datetime}", ln=True)
     pdf.ln(10)
+
+    pdf.set_font("Arial", size=10)
+    pdf.cell(0, 10, txt="(C) 2025 Sardaana Eginova - Licensed under the MIT License", ln=True, align='C')
 
     pdf_output = "detection_report.pdf"
     pdf.output(pdf_output)
@@ -252,14 +257,14 @@ if uploaded_file_od != None:
     image.save(byte_io, format='JPEG')
     byte_array = byte_io.getvalue()
 
-    with open("test_image.jpg", "wb") as f:
+    with open("input.jpg", "wb") as f:
         f.write(byte_array)
     
     workspace_id = 'ai-eg-7bmff'
     model_id = 'gas-pipelines'
     version_number = 2
 
-    run_inference(workspace_id, model_id, version_number, "test_image.jpg", inferenced_img)
+    run_inference(workspace_id, model_id, version_number, "input.jpg", inferenced_img)
 
 
 """
