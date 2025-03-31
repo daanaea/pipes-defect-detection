@@ -81,7 +81,7 @@ PipeDetect exemplifies the practical use of AI and machine vision in industrial 
 |-------------------------------|-------------|
 | Current code version | v1.0 |
 | Codebase repository | [GitHub](https://github.com/daanaea/pipes-defect-detection/edit/main/README.md) |
-| Legal Code License | MIT |
+| License | MIT |
 | Code versioning system used | Git |
 | Software code languages, tools, and services used | Python, Streamlit, YOLOv11, OpenCV |
 | Compilation requirements, operating environments & dependencies | Python 3.10, streamlit, torch, ultralytics |
