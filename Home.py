@@ -4,6 +4,10 @@ import cv2
 import numpy as np
 from roboflow import Roboflow
 import io
+from fpdf import FPDF
+import base64
+import os
+from datetime import datetime
 
 ## store initial session state values
 project_url_od, private_api_key, uploaded_file_od = ("", "", "")
@@ -24,6 +28,22 @@ if 'show_class_label' not in st.session_state:
     st.session_state['show_class_label'] = 'Show Labels'
 if 'box_type' not in st.session_state:
     st.session_state['box_type'] = "regular"
+
+project_url_od = 'https://app.roboflow.com/ai-eg-7bmff/gas-pipelines/2'
+private_api_key = 'u8UOsCouQTPV12lxGfny'
+extracted_url = project_url_od.split("roboflow.com/")[1]
+if "model" in project_url_od.split("roboflow.com/")[1]:
+    workspace_id = extracted_url.split("/")[0]
+    model_id = extracted_url.split("/")[1]
+    version_number = extracted_url.split("/")[3]
+elif "deploy" in project_url_od.split("roboflow.com/")[1]:
+    workspace_id = extracted_url.split("/")[0]
+    model_id = extracted_url.split("/")[1]
+    version_number = extracted_url.split("/")[3]
+else:
+    workspace_id = extracted_url.split("/")[0]
+    model_id = extracted_url.split("/")[1]
+    version_number = extracted_url.split("/")[2]
 
 def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenced_img):
     rf = Roboflow(api_key=st.session_state['private_api_key'])
@@ -48,6 +68,7 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
     st.image(uploaded_img, caption="Uploaded image")
 
     predictions = model.predict(uploaded_img) # 'https://daanaea.github.io/i/assets/img/IMG_6905_pipe_with_corrosion.jpg'
+    predictions.save("output.jpg")
     predictions_json = predictions.json()
 
     # drawing bounding boxes with the Pillow library
@@ -104,13 +125,6 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
         else:
             bg_color = (255, 0, 0)
             alpha = 0.35 # transparency factor
-            # add class name with filled background
-            # cv2.rectangle(
-            #     inferenced_img,
-            #     (int(x0), int(y0)), (int(x1), int(y0) + 85),
-            #     color=(0, 255, 100),
-            #     thickness=5
-            # )
             cv2.putText(inferenced_img,
                 class_name + ' ' + str(round(confidence_score, 2)), #text to place on image
                 (int(x0) + 5, int(y0) - 55), #location of text
@@ -163,20 +177,53 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
         col4, col5, col6 = st.columns(3)
         col4.write('Applied preprocessing steps:')
         col4.json(version.preprocessing)
-        # col5.write('Augmentation steps applied:')
-        # col5.json(version.augmentation)
-        # col6.metric(label='Тренировочный датасет (train)', value=version.splits['train'], delta=f"Increased by Factor of {(version.splits['train'] / project.splits['train'])}")
-        # col6.metric(label='Проверочный датасет (validation)', value=version.splits['valid'], delta="No Change")
-        # col6.metric(label='Тестовый датасет (test)', value=version.splits['test'], delta="No Change")
-
-
-# # Add in location to select image.
-# with st.sidebar:
-#     st.write("#### Выберите изображения для обработки.")
-#     uploaded_file_od = st.file_uploader("Загрузка файла изображения",
-#                                         type=["png", "jpg", "jpeg"],
-#                                         accept_multiple_files=False)
     
+    if st.button("Generate PDF report"):
+        pdf_path = generate_pdf(predictions_json, "output.jpg")
+        display_pdf_download_button(pdf_path)
+
+# save results into PDF
+def generate_pdf(result_json, image_path):
+    pdf = FPDF()
+    pdf.add_page()
+
+    # Add project name in bold
+    pdf.set_font("Arial", style="B", size=12)
+    pdf.cell(200, 10, txt="GPdefectscan AI", ln=True, align='C')
+    pdf.ln(5)
+
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Gas Pipeline Defect Detection Report", ln=True, align='C')
+    pdf.ln(10)
+
+    pdf.image(image_path, x=10, y=None, w=180)
+    pdf.ln(85)
+
+    pdf.set_font("Arial", size=10)
+    for item in result_json['predictions']:
+        text = f"Class: {item['class']}, Confidence: {item['confidence']:.2f}, BBox: {item['x']}, {item['y']}, {item['width']}, {item['height']}"
+        pdf.multi_cell(0, 10, txt=text)
+
+    pdf.ln(10)
+    pdf.set_font("Arial", size=8)
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    pdf.cell(200, 10, txt=f"Generated on: {current_datetime}", ln=True, align='C')
+
+    # Add project website link
+    pdf.set_font("Arial", size=10)
+    pdf.cell(200, 10, txt="Website: https://pipes-defect-detection.streamlit.app/", ln=True, align='C')
+    pdf.ln(10)
+
+    pdf_output = "detection_report.pdf"
+    pdf.output(pdf_output)
+    return pdf_output
+
+def display_pdf_download_button(pdf_path):
+    with open(pdf_path, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+        href = f'<a href="data:application/pdf;base64,{base64_pdf}" download="detection_report.pdf">📄 Download PDF Report</a>'
+        st.markdown(href, unsafe_allow_html=True)
+
 st.write("# GPdefectscan AI: Intelligent Pipeline Defect Segmentation System")
 
 with st.form("project_access"):
@@ -185,32 +232,14 @@ with st.form("project_access"):
                                         type=["png", "jpg", "jpeg"],
                                         accept_multiple_files=False)
     st.write("#### Click 'Find defects' after uploading the image!")
-    # project_url_od = st.text_input("Project URL", key="project_url_od",
-    #                             help="Copy/Paste Your Project URL: https://docs.roboflow.com/python#finding-your-project-information-manually",
-    #                             placeholder="https://app.roboflow.com/workspace-id/model-id/version")
-    # private_api_key = st.text_input("Private API Key", key="private_api_key", type="password",placeholder="Input Private API Key")
+   
     submitted = st.form_submit_button("Find defects")
     
     if submitted:
         st.write("Loading model...")
-        project_url_od = 'https://app.roboflow.com/ai-eg-7bmff/gas-pipelines/2'
-        private_api_key = 'u8UOsCouQTPV12lxGfny'
-        extracted_url = project_url_od.split("roboflow.com/")[1]
-        if "model" in project_url_od.split("roboflow.com/")[1]:
-            workspace_id = extracted_url.split("/")[0]
-            model_id = extracted_url.split("/")[1]
-            version_number = extracted_url.split("/")[3]
-        elif "deploy" in project_url_od.split("roboflow.com/")[1]:
-            workspace_id = extracted_url.split("/")[0]
-            model_id = extracted_url.split("/")[1]
-            version_number = extracted_url.split("/")[3]
-        else:
-            workspace_id = extracted_url.split("/")[0]
-            model_id = extracted_url.split("/")[1]
-            version_number = extracted_url.split("/")[2]
 
 if uploaded_file_od != None:
-    # User-selected image.
+    # upload user image
     image = Image.open(uploaded_file_od)
     uploaded_img = np.array(image)
     inferenced_img = uploaded_img.copy()
@@ -232,7 +261,7 @@ if uploaded_file_od != None:
 
 """
 
-### User Guide
+### User guide
 
 ##### Website
 
