@@ -38,14 +38,14 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
         if project_metadata[i]['id'] == extracted_url:
             st.write(f"#### Model: {model_id}")
             st.write(f"#### Version: {project_metadata[i]['name']}")
-            st.write(f"Input Image Parameters (pixels, px):")
+            st.write(f"Input image (px):")
 
             width_metric, height_metric = st.columns(2)
             width_metric.metric(label='Width (px)', value=project_metadata[i]['preprocessing']['resize']['width'])
             height_metric.metric(label='Height (px)', value=project_metadata[i]['preprocessing']['resize']['height'])
 
-    st.write("#### Uploaded Image")
-    st.image(uploaded_img, caption="Uploaded Image")
+    st.write("#### Uploaded image")
+    st.image(uploaded_img, caption="Uploaded image")
 
     predictions = model.predict(uploaded_img) # 'https://daanaea.github.io/i/assets/img/IMG_6905_pipe_with_corrosion.jpg'
     predictions_json = predictions.json()
@@ -131,37 +131,37 @@ def run_inference(workspace_id, model_id, version_number, uploaded_img, inferenc
 
 
     ## Subtitle.
-    st.write("### Detected Defects")
-    st.image(inferenced_img, caption="Processed Image", use_container_width=True)
+    st.write("### Detected defects")
+    st.image(inferenced_img, caption="Processed image", use_container_width=True)
 
-    results_tab, json_tab, project_tab = st.tabs(["Processing Results", "Results in JSON Format", "Model Information"])
+    results_tab, json_tab, project_tab = st.tabs(["Processing results", "Results in JSON format", "Model information"])
 
     with results_tab:
         ## Display results dataframe in main app.
-        st.write('### Processing Results')
+        st.write('### Processing results')
         st.dataframe(collected_predictions)
 
     with json_tab:
         ## Display the JSON in main app.
-        st.write('### Results in JSON Format')
+        st.write('### Results in JSON format')
         st.write(predictions_json)
 
     with project_tab:
-        st.write(f"Damage Group: {project.annotation}")
+        st.write(f"Damage group: {project.annotation}")
         col1, col2, col3 = st.columns(3)
-        col1.write(f'Total Images in Dataset: {version.images}')
+        col1.write(f'Total images in dataset: {version.images}')
         # col1.metric(label='Количество аугментированных изображений', value=version.splits['train'])
         
         for i in range(len(project_metadata)):
             if project_metadata[i]['id'] == extracted_url:
                 col2.metric(label='mean Average Precision (mAP)', value=f"{float(project_metadata[i]['model']['map'])}%")
         
-        col3.metric(label='Training Dataset (train)', value=project.splits['train'])
-        col3.metric(label='Validation Dataset (validation)', value=project.splits['valid'])
-        col3.metric(label='Test Dataset (test)', value=project.splits['test'])
+        col3.metric(label='Training dataset (train)', value=project.splits['train'])
+        col3.metric(label='Validation dataset (validation)', value=project.splits['valid'])
+        col3.metric(label='Test dataset (test)', value=project.splits['test'])
 
         col4, col5, col6 = st.columns(3)
-        col4.write('Applied Preprocessing Steps:')
+        col4.write('Applied preprocessing steps:')
         col4.json(version.preprocessing)
         # col5.write('Augmentation steps applied:')
         # col5.json(version.augmentation)
@@ -184,12 +184,12 @@ with st.form("project_access"):
     uploaded_file_od = st.file_uploader("Upload Image File",
                                         type=["png", "jpg", "jpeg"],
                                         accept_multiple_files=False)
-    st.write("#### Click 'Find Defects' after uploading the image!")
+    st.write("#### Click 'Find defects' after uploading the image!")
     # project_url_od = st.text_input("Project URL", key="project_url_od",
     #                             help="Copy/Paste Your Project URL: https://docs.roboflow.com/python#finding-your-project-information-manually",
     #                             placeholder="https://app.roboflow.com/workspace-id/model-id/version")
     # private_api_key = st.text_input("Private API Key", key="private_api_key", type="password",placeholder="Input Private API Key")
-    submitted = st.form_submit_button("Find Defects")
+    submitted = st.form_submit_button("Find defects")
     
     if submitted:
         st.write("Loading model...")
