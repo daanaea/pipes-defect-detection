@@ -1,6 +1,6 @@
 ## *PipeDetect: A Streamlit-Powered Web Tool for Automated Pipeline Defect Detection Using YOLOv11*
 
-[![DOI](https://zenodo.org/badge/916820162.svg)](https://doi.org/10.5281/zenodo.15110765)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15110906.svg)](https://doi.org/10.5281/zenodo.15110906)
 
 
 ### *Abstract*
@@ -79,12 +79,12 @@ PipeDetect exemplifies the practical use of AI and machine vision in industrial 
 
 | *Code metadata description* | *Details* |
 |-------------------------------|-------------|
-| Current code version | v1.0 |
+| Current code version | v1.5 |
 | Codebase repository | [GitHub](https://github.com/daanaea/pipes-defect-detection/edit/main/README.md) |
 | License | MIT |
 | Code versioning system used | Git |
 | Software code languages, tools, and services used | Python, Streamlit, YOLOv11, OpenCV |
 | Compilation requirements, operating environments & dependencies | Python 3.10, streamlit, torch, ultralytics |
-| Support email for questions | eginovaa@gmail.com |
+| Support email for questions | [eginovaa@mail.ru](mailto:eginovaa@mail.ru) |
 
 ---
