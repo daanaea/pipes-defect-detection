@@ -2,10 +2,12 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15110906.svg)](https://doi.org/10.5281/zenodo.15110906)
 
+[![Dataset on Kaggle](https://img.shields.io/badge/Kaggle-View%20Dataset-blue?logo=kaggle)]([https://www.kaggle.com/datasets/your-username/your-dataset-name](https://www.kaggle.com/datasets/sardaanaeginova/gas-pipelines/code))
+
 
 ### *Abstract*
 
-This paper presents PipeDetect, an open-access web-based platform for automated detection of pipeline defects using advanced deep learning techniques. Developed using Streamlit and YOLOv11, the system enables users to upload pipeline imagery and receive instant visual feedback on detected defects such as corrosion, deformation, and coating damage. The tool is designed for engineers, pipeline inspectors, and urban infrastructure managers, offering an accessible and intuitive interface without the need for specialized software or hardware. PipeDetect bridges the gap between cutting-edge computer vision models and real-world infrastructure monitoring by delivering AI-based defect analysis through the browser. The tool is deployed at [pipes-defect-detection.streamlit.app](https://pipes-defect-detection.streamlit.app) and the source code is available on GitHub [link].
+This paper presents PipeDetect, an open-access web-based platform for automated detection of pipeline defects using advanced deep learning techniques. Developed using Streamlit and YOLOv11, the system enables users to upload pipeline imagery and receive instant visual feedback on detected defects such as corrosion, deformation, and coating damage. The tool is designed for engineers, pipeline inspectors, and urban infrastructure managers, offering an accessible and intuitive interface without the need for specialized software or hardware. PipeDetect bridges the gap between cutting-edge computer vision models and real-world infrastructure monitoring by delivering AI-based defect analysis through the browser. The tool is deployed at [pipes-defect-detection.streamlit.app](https://pipes-defect-detection.streamlit.app) and the source code is available on [GitHub](https://github.com/daanaea/pipes-defect-detection).
 
 ---
 
