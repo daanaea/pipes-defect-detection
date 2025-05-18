@@ -1,7 +1,6 @@
 ## *PipeDetect: A Streamlit-Powered Web Tool for Automated Pipeline Defect Detection Using YOLOv11*
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15110906.svg)](https://doi.org/10.5281/zenodo.15110906)
-
 [![Dataset on Kaggle](https://img.shields.io/badge/Kaggle-View%20Dataset-blue?logo=kaggle)]([https://www.kaggle.com/datasets/your-username/your-dataset-name](https://www.kaggle.com/datasets/sardaanaeginova/gas-pipelines/code))
 
 
